@@ -51,7 +51,7 @@
         android:layout_alignBottom="@+id/button1"
         android:layout_toRightOf="@+id/button1"
         android:enabled="false"
-        android:onClick="onStop"
+        android:onClick="doStopKittyCity"
         android:text="@string/Stop" />
 
     <Button
@@ -64,40 +64,17 @@
         android:enabled="false"
         android:text="@string/wakeup"
 		android:onClick="doWakeup"/>
-<View
-        android:id="@+id/view2"
-        android:layout_width="fill_parent"
-        android:layout_height="2dip"
-        android:layout_below="@+id/button2"
-        android:background="#000000" />
 
-<Button
+    <Button
     android:id="@+id/button1"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_alignParentLeft="true"
     android:layout_below="@+id/textView2"
-    android:onClick="onStart"
+    android:onClick="doStartKittyCity"
     android:text="@string/Start" />
 
-<TextView
-    android:id="@+id/textView3"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_alignParentLeft="true"
-    android:layout_below="@+id/view2"
-    android:text="Starting a mediaplayer service" />
-
-<Button
-    android:id="@+id/GoToServiceActivity"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_alignParentLeft="true"
-    android:layout_below="@+id/textView3"
-    android:onClick="doService"
-    android:text="GoToServiceActivity" />
-
-<TextView
+    <TextView
     android:id="@+id/textView4"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"

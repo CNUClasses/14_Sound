@@ -2,9 +2,11 @@ package com.example.sound;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -18,7 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 
 public class ActivitySound extends Activity implements MediaPlayer.OnCompletionListener, OnSeekBarChangeListener ,SoundPool.OnLoadCompleteListener{
-
     private static final int MAX_STREAMS = 10;
     private static final float LEFTVOLUME = 1;
     private static final float RIGHTVOLUME = 1;
@@ -28,7 +29,10 @@ public class ActivitySound extends Activity implements MediaPlayer.OnCompletionL
     private static final float RATE = 1;
     private static final int UNINITIALIZED = -1;
     private static final String TAG = "ActivitySound";
+
     SoundPool sp = null;
+
+    MediaPlayer mediaPlayer;
 
     int trackNap;
     int trackMosquito;
@@ -65,7 +69,19 @@ public class ActivitySound extends Activity implements MediaPlayer.OnCompletionL
         sb.setOnSeekBarChangeListener(this);
 
         //get soundpool object
-        sp = new SoundPool(MAX_STREAMS, AudioManager.STREAM_MUSIC, 0);    //srcQuality Currently has no effect. Use 0 for the default.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build();
+
+            sp = new SoundPool.Builder()
+                    .setMaxStreams(6)
+                    .setAudioAttributes(audioAttributes)
+                    .build();
+        } else {
+           sp = new SoundPool(MAX_STREAMS, AudioManager.STREAM_MUSIC, 0);    //srcQuality Currently has no effect. Use 0 for the default.
+        }
 
         //listen for when following loads are done
         sp.setOnLoadCompleteListener(this);
@@ -74,6 +90,8 @@ public class ActivitySound extends Activity implements MediaPlayer.OnCompletionL
         trackNap = sp.load(this, R.raw.snore, 0);
         trackMosquito = sp.load(this, R.raw.mosquito, 0);
         trackSmite = sp.load(this, R.raw.flyswat, 0);
+
+
     }
 
     /**
@@ -143,7 +161,7 @@ public class ActivitySound extends Activity implements MediaPlayer.OnCompletionL
     protected void onPause() {
         super.onPause();
         if (mp!= null)
-            onStop(null);
+            doStopKittyCity(null);
     }
 
     @Override
@@ -211,47 +229,8 @@ public class ActivitySound extends Activity implements MediaPlayer.OnCompletionL
     private void setMosquitoSwatButtonState(boolean bVal) {
         bdoMosquitoSwat.setEnabled(bVal);
     }
-    ///////////////////////////////////////////////////////////////////////////////////////////
-    MediaPlayer mp = null;
 
-    public void onStart(View v) {
-        mp = MediaPlayer.create(this, R.raw.kittycity);  //on completion should be in prepared state
-        mp.start();
-        mp.setOnCompletionListener(this);
-        setMediaPlayerButtonState(false);
-    }
 
-    public void onStop(View v) {
-        if (mp != null) {
-            mp.stop();
-            mp.release();
-            mp = null;
-        }
-        setMediaPlayerButtonState(true);
-    }
-
-    private void setMediaPlayerButtonState(boolean bState) {
-        bdoStart.setEnabled(bState);
-        bdoStop.setEnabled(!bState);
-    }
-
-    /* (non-Javadoc)
-     * @see android.media.MediaPlayer.OnCompletionListener#onCompletion(android.media.MediaPlayer)
-     */
-//    @Override
-//    public void onCompletion(MediaPlayer mp1) {
-//
-//    }
-/////////////////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * @param v Start the activity that demos running media player as a service
-     */
-    public void doService(View v) {
-        Intent myIntent = new Intent(this, TestService.class);
-        startActivity(myIntent);
-    }
-///////////////////////////////////////////////////////////////////////////////////////////    
 
     /* (non-Javadoc)
      * @see android.widget.SeekBar.OnSeekBarChangeListener#onProgressChanged(android.widget.SeekBar, int, boolean)
@@ -307,6 +286,10 @@ public class ActivitySound extends Activity implements MediaPlayer.OnCompletionL
             bdoMosquito.setEnabled(true);
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////////////
+
+    MediaPlayer mp = null;
+
     /**
      * Called when the end of a media source is reached during playback.
      *
@@ -314,7 +297,29 @@ public class ActivitySound extends Activity implements MediaPlayer.OnCompletionL
      */
     @Override
     public void onCompletion(MediaPlayer mp) {
-        onStop(null);
+        doStopKittyCity(null);
         Log.d(TAG, "Stopping Mediaplayer from onCompletion");
+    }
+
+    public void doStartKittyCity(View v) {
+        mp = MediaPlayer.create(this, R.raw.kittycity);  //on completion should be in prepared state
+        mp.start();
+        mp.setOnCompletionListener(this);
+        setMediaPlayerButtonState(false);
+    }
+
+    public void doStopKittyCity(View v) {
+        if (mp != null) {
+            mp.stop();
+            mp.release();
+            mp = null;
+        }
+        setMediaPlayerButtonState(true);
+    }
+
+    //toggles buttons
+    private void setMediaPlayerButtonState(boolean bState) {
+        bdoStart.setEnabled(bState);
+        bdoStop.setEnabled(!bState);
     }
 }
