@@ -32,8 +32,6 @@ public class ActivitySound extends Activity implements MediaPlayer.OnCompletionL
 
     SoundPool sp = null;
 
-    MediaPlayer mediaPlayer;
-
     int trackNap;
     int trackMosquito;
     int trackSmite;
@@ -76,7 +74,7 @@ public class ActivitySound extends Activity implements MediaPlayer.OnCompletionL
                     .build();
 
             sp = new SoundPool.Builder()
-                    .setMaxStreams(6)
+                    .setMaxStreams(6)       //can have a max of 6 streams, add a seventh and the first rolls off the queue
                     .setAudioAttributes(audioAttributes)
                     .build();
         } else {
@@ -233,8 +231,8 @@ public class ActivitySound extends Activity implements MediaPlayer.OnCompletionL
 
 
     /* (non-Javadoc)
-     * @see android.widget.SeekBar.OnSeekBarChangeListener#onProgressChanged(android.widget.SeekBar, int, boolean)
-     */
+         * @see android.widget.SeekBar.OnSeekBarChangeListener#onProgressChanged(android.widget.SeekBar, int, boolean)
+         */
     @Override
     public void onProgressChanged(SeekBar seekBar, int arg1, boolean arg2) {
         int prog = seekBar.getProgress();
