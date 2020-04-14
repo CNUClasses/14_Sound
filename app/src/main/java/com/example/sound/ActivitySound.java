@@ -74,7 +74,7 @@ public class ActivitySound extends Activity implements MediaPlayer.OnCompletionL
                     .build();
 
             sp = new SoundPool.Builder()
-                    .setMaxStreams(6)       //can have a max of 6 streams, add a seventh and the first rolls off the queue
+                    .setMaxStreams(MAX_STREAMS)       //can have a max of 6 streams, add a seventh and the first rolls off the queue
                     .setAudioAttributes(audioAttributes)
                     .build();
         } else {
@@ -88,8 +88,6 @@ public class ActivitySound extends Activity implements MediaPlayer.OnCompletionL
         trackNap = sp.load(this, R.raw.snore, 0);
         trackMosquito = sp.load(this, R.raw.mosquito, 0);
         trackSmite = sp.load(this, R.raw.flyswat, 0);
-
-
     }
 
     /**
