@@ -6,6 +6,7 @@ import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,11 +16,12 @@ import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class ActivitySound extends Activity implements MediaPlayer.OnCompletionListener, OnSeekBarChangeListener ,SoundPool.OnLoadCompleteListener{
+public class ActivitySound extends Activity implements MediaPlayer.OnCompletionListener,  OnSeekBarChangeListener ,SoundPool.OnLoadCompleteListener{
     private static final int MAX_STREAMS = 10;
     private static final float LEFTVOLUME = 1;
     private static final float RIGHTVOLUME = 1;
@@ -63,7 +65,7 @@ public class ActivitySound extends Activity implements MediaPlayer.OnCompletionL
         bdoStop = (Button) findViewById(R.id.button2);
         sb = (SeekBar) findViewById(R.id.seekBarSound);
         sb.setMax(100);
-        sb.setProgress(100); //have it start maxed
+        sb.setProgress(50); //have it start maxed
         sb.setOnSeekBarChangeListener(this);
 
         //get soundpool object
@@ -74,7 +76,7 @@ public class ActivitySound extends Activity implements MediaPlayer.OnCompletionL
                     .build();
 
             sp = new SoundPool.Builder()
-                    .setMaxStreams(MAX_STREAMS)       //can have a max of 6 streams, add a seventh and the first rolls off the queue
+                    .setMaxStreams(MAX_STREAMS)       //can have a max of MAX_STREAMS streams, add another and the first rolls off the queue
                     .setAudioAttributes(audioAttributes)
                     .build();
         } else {
@@ -90,69 +92,11 @@ public class ActivitySound extends Activity implements MediaPlayer.OnCompletionL
         trackSmite = sp.load(this, R.raw.flyswat, 0);
     }
 
-    /**
-     * Called after {@link #onRestoreInstanceState}, {@link #onRestart}, or
-     * {@link #onPause}, for your activity to start interacting with the user.
-     * This is a good place to begin animations, open exclusive-access devices
-     * (such as the camera), etc.
-     * <p/>
-     * <p>Keep in mind that onResume is not the best indicator that your activity
-     * is visible to the user; a system window such as the keyguard may be in
-     * front.  Use {@link #onWindowFocusChanged} to know for certain that your
-     * activity is visible to the user (for example, to resume a game).
-     * <p/>
-     * <p><em>Derived classes must call through to the super class's
-     * implementation of this method.  If they do not, an exception will be
-     * thrown.</em></p>
-     *
-     * @see #onRestoreInstanceState
-     * @see #onRestart
-     * @see #onPostResume
-     * @see #onPause
-     */
     @Override
     protected void onResume() {
         super.onResume();
     }
 
-    /**
-     * Called as part of the activity lifecycle when an activity is going into
-     * the background, but has not (yet) been killed.  The counterpart to
-     * {@link #onResume}.
-     * <p/>
-     * <p>When activity B is launched in front of activity A, this callback will
-     * be invoked on A.  B will not be created until A's {@link #onPause} returns,
-     * so be sure to not do anything lengthy here.
-     * <p/>
-     * <p>This callback is mostly used for saving any persistent state the
-     * activity is editing, to present a "edit in place" model to the user and
-     * making sure nothing is lost if there are not enough resources to start
-     * the new activity without first killing this one.  This is also a good
-     * place to do things like stop animations and other things that consume a
-     * noticeable amount of CPU in order to make the switch to the next activity
-     * as fast as possible, or to close resources that are exclusive access
-     * such as the camera.
-     * <p/>
-     * <p>In situations where the system needs more memory it may kill paused
-     * processes to reclaim resources.  Because of this, you should be sure
-     * that all of your state is saved by the time you return from
-     * this function.  In general {@link #onSaveInstanceState} is used to save
-     * per-instance state in the activity and this method is used to store
-     * global persistent data (in content providers, files, etc.)
-     * <p/>
-     * <p>After receiving this call you will usually receive a following call
-     * to {@link #onStop} (after the next activity has been resumed and
-     * displayed), however in some cases there will be a direct call back to
-     * {@link #onResume} without going through the stopped state.
-     * <p/>
-     * <p><em>Derived classes must call through to the super class's
-     * implementation of this method.  If they do not, an exception will be
-     * thrown.</em></p>
-     *
-     * @see #onResume
-     * @see #onSaveInstanceState
-     * @see #onStop
-     */
     @Override
     protected void onPause() {
         super.onPause();
@@ -298,10 +242,11 @@ public class ActivitySound extends Activity implements MediaPlayer.OnCompletionL
     }
 
     public void doStartKittyCity(View v) {
+        doStopKittyCity(null);
         mp = MediaPlayer.create(this, R.raw.kittycity);  //on completion should be in prepared state
         mp.start();
         mp.setOnCompletionListener(this);
-        setMediaPlayerButtonState(false);
+        setLocalMediaPlayerButtonState(false);
     }
 
     public void doStopKittyCity(View v) {
@@ -310,12 +255,71 @@ public class ActivitySound extends Activity implements MediaPlayer.OnCompletionL
             mp.release();
             mp = null;
         }
-        setMediaPlayerButtonState(true);
+        setLocalMediaPlayerButtonState(true);
     }
 
     //toggles buttons
-    private void setMediaPlayerButtonState(boolean bState) {
+    private void setLocalMediaPlayerButtonState(boolean bState) {
         bdoStart.setEnabled(bState);
         bdoStop.setEnabled(!bState);
+    }
+
+    private void setNetworkMediaPlayerButtonState(boolean bState) {
+        (findViewById(R.id.buttonStartURL)).setEnabled(bState);
+        (findViewById(R.id.buttonStopURL)).setEnabled(!bState);
+    }
+
+    MediaPlayer mp1;
+    public void doNetworkMP(View view) {
+        setNetworkMediaPlayerButtonState(false);
+        //USE PHYSICAL DEVICE FOR THIS!
+        //It seems that MediaPlayer streaming media on emulators fail with logcat error
+        // E/MediaPlayerNative: error (1, -2147483648), the '1' value corresponds to the constant
+        // in MediaPlayer.MEDIA_ERROR_UNKNOWN. -2147483648 corresponds to hexadecimal 0x80000000
+        // which is defined as UNKNOWN_ERROR in frameworks/native/include/utils/Errors.h
+
+        //be careful, some file formats are supported some are not see
+        //https://developer.android.com/guide/topics/media/media-formats
+        String s = new String("https://download.samplelib.com/mp3/sample-3s.mp3");
+//        String s = new String("https://filesamples.com/samples/audio/mp3/sample4.mp3");
+//        String s = new String("https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_480_1_5MG.mp4");
+
+        mp1= new MediaPlayer();
+        mp1.setAudioAttributes(
+                new AudioAttributes.Builder()
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .setUsage(AudioAttributes.USAGE_MEDIA)
+                        .build()
+        );
+        try{
+            mp1.setDataSource(s);
+            mp1.prepareAsync();     //do the preparation in seperate thread
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //media will be started after completion of preparing...
+        mp1.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer player) {
+                player.start();
+            }
+        });
+
+        mp1.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer player) {
+                doStopNetworkMP(null);
+            }
+        });
+    }
+
+    public void doStopNetworkMP(View view) {
+        setNetworkMediaPlayerButtonState(true);
+        if (mp1 != null) {
+            mp1.stop();
+            mp1.release();
+            mp1 = null;
+        }
     }
 }

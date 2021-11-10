@@ -1,108 +1,164 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relativeLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ActivitySound" >
+    tools:context=".ActivitySound">
 
     <Button
         android:id="@+id/button6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/button5"
-        android:layout_alignBottom="@+id/button5"
-        android:layout_toRightOf="@+id/button5"
         android:enabled="false"
         android:onClick="doMosquitoSwatSound"
-        android:text="@string/Smite" />
+        android:text="@string/Smite"
+        app:layout_constraintBaseline_toBaselineOf="@+id/button5"
+        app:layout_constraintBottom_toBottomOf="@+id/button5"
+        app:layout_constraintLeft_toRightOf="@+id/button5" />
 
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:text="@string/SoundPool" />
+        android:text="@string/SoundPool"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/button3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/textView1"
         android:enabled="false"
         android:onClick="doNap"
-        android:text="@string/Nap" />
+        android:text="@string/Nap"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView1" />
 
     <Button
         android:id="@+id/button5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/button3"
         android:enabled="false"
         android:onClick="doMosquitoSound"
-        android:text="@string/Mosquito" />
+        android:text="@string/Mosquito"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button3" />
+
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="16dp"
+        android:onClick="doStartKittyCity"
+        android:text="@string/Start"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Adjust Mosquito Volume"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button6" />
+
+    <SeekBar
+        android:id="@+id/seekBarSound"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+    <View
+        android:id="@+id/view1"
+        android:layout_width="fill_parent"
+        android:layout_height="2dip"
+        android:background="#000000"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/seekBarSound" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:text="res/raw MediaPlayer demo"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view1" />
 
     <Button
         android:id="@+id/button2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/button1"
-        android:layout_alignBottom="@+id/button1"
-        android:layout_toRightOf="@+id/button1"
         android:enabled="false"
         android:onClick="doStopKittyCity"
-        android:text="@string/Stop" />
+        android:text="@string/Stop"
+        app:layout_constraintBottom_toTopOf="@+id/view2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.106"
+        app:layout_constraintStart_toEndOf="@+id/button1"
+        app:layout_constraintTop_toBottomOf="@+id/seekBarSound"
+        app:layout_constraintVertical_bias="0.575" />
 
     <Button
         android:id="@+id/button4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/button6"
-        android:layout_alignLeft="@+id/button2"
         android:layout_marginLeft="14dp"
         android:enabled="false"
+        android:onClick="doWakeup"
         android:text="@string/wakeup"
-		android:onClick="doWakeup"/>
+        app:layout_constraintBottom_toTopOf="@+id/button6"
+        app:layout_constraintLeft_toLeftOf="@+id/button2" />
 
-    <Button
-    android:id="@+id/button1"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_alignParentLeft="true"
-    android:layout_below="@+id/textView2"
-    android:onClick="doStartKittyCity"
-    android:text="@string/Start" />
+    <View
+        android:id="@+id/view2"
+        android:layout_width="fill_parent"
+        android:layout_height="2dip"
+        android:layout_marginTop="28dp"
+        android:background="#000000"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button1" />
 
     <TextView
-    android:id="@+id/textView4"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_alignParentLeft="true"
-    android:layout_below="@+id/button6"
-    android:text="Adjust Mosquito Volume" />
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Networked MediaPlayer demo \n(works on physical device not emulator)"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.061"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view2" />
 
-<SeekBar
-    android:id="@+id/seekBarSound"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_alignParentLeft="true"
-    android:layout_below="@+id/textView4" />
+    <Button
+        android:id="@+id/buttonStartURL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:onClick="doNetworkMP"
+        android:text="Start network stream"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.032"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
-<View
-    android:id="@+id/view1"
-    android:layout_width="fill_parent"
-    android:layout_height="2dip"
-    android:layout_alignParentLeft="true"
-    android:layout_below="@+id/seekBarSound"
-    android:background="#000000" />
+    <Button
+        android:id="@+id/buttonStopURL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:enabled="false"
+        android:onClick="doStopNetworkMP"
+        android:text="Stop Network Stream"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.041"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonStartURL" />
 
-<TextView
-    android:id="@+id/textView2"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_alignParentLeft="true"
-    android:layout_below="@+id/view1"
-    android:text="MediaPlayer demo" />
-
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
