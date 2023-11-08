@@ -102,6 +102,7 @@ public class ActivitySound extends Activity implements MediaPlayer.OnCompletionL
         super.onPause();
         if (mp!= null)
             doStopKittyCity(null);
+        stopNetworkMP();
     }
 
     @Override
@@ -271,6 +272,7 @@ public class ActivitySound extends Activity implements MediaPlayer.OnCompletionL
 
     MediaPlayer mp1;
     public void doNetworkMP(View view) {
+        stopNetworkMP();
         setNetworkMediaPlayerButtonState(false);
         //USE PHYSICAL DEVICE FOR THIS!
         //It seems that MediaPlayer streaming media on emulators fail with logcat error
@@ -306,6 +308,7 @@ public class ActivitySound extends Activity implements MediaPlayer.OnCompletionL
             }
         });
 
+        //when media finishes playing clean up player and reset button state
         mp1.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer player) {
@@ -314,12 +317,15 @@ public class ActivitySound extends Activity implements MediaPlayer.OnCompletionL
         });
     }
 
-    public void doStopNetworkMP(View view) {
-        setNetworkMediaPlayerButtonState(true);
+    public void stopNetworkMP(){
         if (mp1 != null) {
             mp1.stop();
             mp1.release();
             mp1 = null;
         }
+    }
+    public void doStopNetworkMP(View view) {
+        setNetworkMediaPlayerButtonState(true);
+        stopNetworkMP();
     }
 }
