@@ -68,18 +68,21 @@ public class ActivitySound extends Activity implements MediaPlayer.OnCompletionL
         sb.setProgress(50); //have it start maxed
         sb.setOnSeekBarChangeListener(this);
 
-        //get soundpool object
+        //get soundpool object, if installing on prelollipop then use the old way, otherwise use a builder
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            //A class to encapsulate a collection of attributes describing information about an audio stream
             AudioAttributes audioAttributes = new AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION)
-                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .setUsage(AudioAttributes.USAGE_GAME)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
                     .build();
 
             sp = new SoundPool.Builder()
-                    .setMaxStreams(MAX_STREAMS)       //can have a max of MAX_STREAMS streams, add another and the first rolls off the queue
+                    .setMaxStreams(MAX_STREAMS) //can have a max of MAX_STREAMS streams, add
+                                                //another and the first rolls off the queue
                     .setAudioAttributes(audioAttributes)
                     .build();
         } else {
+            //the old way
            sp = new SoundPool(MAX_STREAMS, AudioManager.STREAM_MUSIC, 0);    //srcQuality Currently has no effect. Use 0 for the default.
         }
 
